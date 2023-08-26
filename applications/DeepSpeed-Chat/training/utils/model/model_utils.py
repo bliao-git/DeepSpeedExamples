@@ -39,7 +39,8 @@ def create_hf_model(model_class,
             model_name_or_path,
             from_tf=bool(".ckpt" in model_name_or_path),
             config=model_config,
-            low_cpu_mem_usage=True)
+            low_cpu_mem_usage=True,
+            torch_dtype=torch.float16)
 
     model.config.end_token_id = tokenizer.eos_token_id
     model.config.pad_token_id = model.config.eos_token_id
