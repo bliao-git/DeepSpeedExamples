@@ -227,7 +227,7 @@ def main():
                             tokenizer,
                             ds_config,
                             disable_dropout=args.disable_dropout)
-    print("Loading finished.")
+    print("Model ready.")
 
     if args.lora_dim > 0:
         model = convert_linear_layer_to_lora(model, args.lora_module_name,
@@ -249,6 +249,7 @@ def main():
         tokenizer,
         args.max_seq_len,
         sft_only_data_path=args.sft_only_data_path)
+    print("Dataset creation finished.")
     # DataLoaders creation:
     if args.local_rank == -1:
         train_sampler = RandomSampler(train_dataset)
@@ -256,6 +257,7 @@ def main():
     else:
         train_sampler = DistributedSampler(train_dataset)
         eval_sampler = DistributedSampler(eval_dataset)
+    print("Building train dataloader ...")
     train_dataloader = DataLoader(train_dataset,
                                   collate_fn=default_data_collator,
                                   sampler=train_sampler,
