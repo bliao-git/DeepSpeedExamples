@@ -308,7 +308,7 @@ def main():
         return perplexity
 
     # Split weights in two groups, one with weight decay and the other not.
-    print("Splitting optimizer weights ...")
+    print("Splitting model for weight decay ...")
     optimizer_grouped_parameters = get_optimizer_grouped_parameters(
         model, args.weight_decay, args.lora_learning_rate)
 
