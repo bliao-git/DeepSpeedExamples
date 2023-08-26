@@ -326,6 +326,7 @@ def main():
         num_training_steps=args.num_train_epochs * num_update_steps_per_epoch,
     )
 
+    get_all_gpu_memory()
     print("Initializing deepspeed ...")
     model, optimizer, _, lr_scheduler = deepspeed.initialize(
         model=model,
@@ -334,6 +335,7 @@ def main():
         config=ds_config,
         lr_scheduler=lr_scheduler,
         dist_init_required=True)
+    get_all_gpu_memory()
 
     if args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
