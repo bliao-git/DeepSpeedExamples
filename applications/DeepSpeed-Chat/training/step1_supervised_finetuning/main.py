@@ -264,7 +264,8 @@ def main():
                                  collate_fn=default_data_collator,
                                  sampler=eval_sampler,
                                  batch_size=args.per_device_eval_batch_size)
-
+    print("Dataset ready.")
+    
     def evaluation(model, eval_dataloader):
         model.eval()
         losses = 0
@@ -287,6 +288,7 @@ def main():
         return perplexity
 
     # Split weights in two groups, one with weight decay and the other not.
+    print("Splitting optimizer weights ...")
     optimizer_grouped_parameters = get_optimizer_grouped_parameters(
         model, args.weight_decay, args.lora_learning_rate)
 
@@ -304,6 +306,7 @@ def main():
         num_training_steps=args.num_train_epochs * num_update_steps_per_epoch,
     )
 
+    print("Initializing deepspeed ...")
     model, optimizer, _, lr_scheduler = deepspeed.initialize(
         model=model,
         optimizer=optimizer,
