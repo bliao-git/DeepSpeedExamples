@@ -217,12 +217,14 @@ def main():
     torch.distributed.barrier()
 
     # load_hf_tokenizer will get the correct tokenizer and set padding tokens based on the model family
+    print("Loading tokenizer & model ...")
     tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
     model = create_hf_model(AutoModelForCausalLM,
                             args.model_name_or_path,
                             tokenizer,
                             ds_config,
                             disable_dropout=args.disable_dropout)
+    print("Loading finished.")
 
     if args.lora_dim > 0:
         model = convert_linear_layer_to_lora(model, args.lora_module_name,
@@ -232,6 +234,7 @@ def main():
             model = make_model_gradient_checkpointing_compatible(model)
 
     # Prepare the data
+    print("Prepraring data ...")
     train_phase = 1
     train_dataset, eval_dataset = create_prompt_dataset(
         args.local_rank,
