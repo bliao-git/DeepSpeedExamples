@@ -344,7 +344,7 @@ def create_prompt_dataset(local_rank,
                 eval_dataset = Subset(eval_dataset, shuffle_idx.tolist())
         torch.save(train_dataset, train_fname)
         torch.save(eval_dataset, eval_fname)
-    torch.distributed.barrier()
+    # torch.distributed.barrier()
     return torch.load(train_fname), torch.load(eval_fname)
 
 
