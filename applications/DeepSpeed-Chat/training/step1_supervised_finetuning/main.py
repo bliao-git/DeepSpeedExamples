@@ -237,6 +237,7 @@ def main():
 
     # Prepare the data
     print("Prepraring data ...")
+    tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
     train_phase = 1
     train_dataset, eval_dataset = create_prompt_dataset(
         args.local_rank,
@@ -269,8 +270,7 @@ def main():
 
     # get_all_gpu_memory()
     # load_hf_tokenizer will get the correct tokenizer and set padding tokens based on the model family
-    print("Loading tokenizer & model ...")
-    tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
+    print("Loading model ...")
     model = create_hf_model(AutoModelForCausalLM,
                             args.model_name_or_path,
                             tokenizer,
