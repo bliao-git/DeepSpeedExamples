@@ -188,6 +188,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    print("Arg parsing finished.")
 
     if args.local_rank == -1:
         device = torch.device("cuda")
@@ -199,6 +200,7 @@ def main():
         deepspeed.init_distributed()
 
     args.global_rank = torch.distributed.get_rank()
+    print("Finishing setting global rank.")
 
     ds_config = get_train_ds_config(offload=args.offload,
                                     stage=args.zero_stage,
@@ -210,6 +212,7 @@ def main():
     ds_config[
         'train_batch_size'] = args.per_device_train_batch_size * torch.distributed.get_world_size(
         ) * args.gradient_accumulation_steps
+    print("Finishing setting ds_config.")
 
     # If passed along, set the training seed now.
     set_random_seed(args.seed)
