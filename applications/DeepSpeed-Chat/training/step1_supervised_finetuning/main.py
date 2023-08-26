@@ -234,24 +234,6 @@ def main():
 
     torch.distributed.barrier()
 
-    get_all_gpu_memory()
-    # load_hf_tokenizer will get the correct tokenizer and set padding tokens based on the model family
-    print("Loading tokenizer & model ...")
-    tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
-    model = create_hf_model(AutoModelForCausalLM,
-                            args.model_name_or_path,
-                            tokenizer,
-                            ds_config,
-                            disable_dropout=args.disable_dropout)
-    print("Model ready.")
-    get_all_gpu_memory()
-
-    if args.lora_dim > 0:
-        model = convert_linear_layer_to_lora(model, args.lora_module_name,
-                                             args.lora_dim)
-        if args.only_optimize_lora:
-            model = only_optimize_lora_parameters(model)
-            model = make_model_gradient_checkpointing_compatible(model)
 
     # Prepare the data
     print("Prepraring data ...")
@@ -284,6 +266,25 @@ def main():
                                  sampler=eval_sampler,
                                  batch_size=args.per_device_eval_batch_size)
     print("Dataset ready.")
+
+    # get_all_gpu_memory()
+    # load_hf_tokenizer will get the correct tokenizer and set padding tokens based on the model family
+    print("Loading tokenizer & model ...")
+    tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
+    model = create_hf_model(AutoModelForCausalLM,
+                            args.model_name_or_path,
+                            tokenizer,
+                            ds_config,
+                            disable_dropout=args.disable_dropout)
+    print("Model ready.")
+    # get_all_gpu_memory()
+
+    if args.lora_dim > 0:
+        model = convert_linear_layer_to_lora(model, args.lora_module_name,
+                                             args.lora_dim)
+        if args.only_optimize_lora:
+            model = only_optimize_lora_parameters(model)
+            model = make_model_gradient_checkpointing_compatible(model)
     
     def evaluation(model, eval_dataloader):
         model.eval()
