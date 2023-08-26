@@ -186,6 +186,21 @@ def parse_args():
     return args
 
 
+def get_all_gpu_memory():
+    n_gpus = torch.cuda.device_count()
+    
+    for i in range(n_gpus):
+        total_mem = torch.cuda.get_device_properties(i).total_memory / 1e6  # Convert bytes to MB
+        allocated = torch.cuda.memory_allocated(i) / 1e6  # Convert bytes to MB
+        cached = torch.cuda.memory_reserved(i) / 1e6  # Convert bytes to MB
+
+        print(f"GPU {i} [{torch.cuda.get_device_name(i)}]:")
+        print(f"  Total memory: {total_mem:.2f} MB")
+        print(f"  Allocated memory: {allocated:.2f} MB")
+        print(f"  Cached memory: {cached:.2f} MB")
+        print("-" * 40)
+
+
 def main():
     args = parse_args()
     print("Arg parsing finished.")
@@ -219,6 +234,7 @@ def main():
 
     torch.distributed.barrier()
 
+    get_all_gpu_memory()
     # load_hf_tokenizer will get the correct tokenizer and set padding tokens based on the model family
     print("Loading tokenizer & model ...")
     tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
@@ -228,6 +244,7 @@ def main():
                             ds_config,
                             disable_dropout=args.disable_dropout)
     print("Model ready.")
+    get_all_gpu_memory()
 
     if args.lora_dim > 0:
         model = convert_linear_layer_to_lora(model, args.lora_module_name,
