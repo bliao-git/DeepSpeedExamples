@@ -240,6 +240,7 @@ def main():
     print("Prepraring data ...")
     tokenizer = load_hf_tokenizer(args.model_name_or_path, fast_tokenizer=True)
     train_phase = 1
+    torch.distributed.all_reduce(buf_create_cache)
     train_dataset, eval_dataset = create_prompt_dataset(
         args.local_rank,
         args.data_path,
